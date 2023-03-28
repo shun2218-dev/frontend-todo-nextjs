@@ -17,11 +17,6 @@ import {
 } from '@mantine/core';
 import { useAuth } from '@/hooks/useAuth';
 
-export const metadata = {
-  title: 'Auth',
-  description: 'Page to sign up or sign in',
-};
-
 const Home: NextPage = () => {
   const [isRegister, setIsRegister] = useState(false);
   const { signIn, signUp, setError, error, form } = useAuth();

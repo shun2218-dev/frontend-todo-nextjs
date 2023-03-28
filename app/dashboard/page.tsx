@@ -6,11 +6,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { IconLogout } from '@tabler/icons-react';
 import type { NextPage } from 'next';
 
-export const meatadata = {
-  title: 'Task Board',
-  description: 'Task Board page after login',
-};
-
 const DashboardPage: NextPage = () => {
   const { signOut } = useAuth();
   return (
