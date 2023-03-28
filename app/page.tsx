@@ -1,91 +1,100 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+'use client';
+import { NextPage } from 'next';
+import { useState } from 'react';
+import {
+  IconDatabase,
+  IconShield,
+  IconExclamationCircle,
+} from '@tabler/icons-react';
+import {
+  Alert,
+  Anchor,
+  Button,
+  Center,
+  Group,
+  PasswordInput,
+  TextInput,
+} from '@mantine/core';
+import { useAuth } from '@/hooks/useAuth';
 
-const inter = Inter({ subsets: ['latin'] })
+export const metadata = {
+  title: 'Auth',
+  description: 'Page to sign up or sign in',
+};
 
-export default function Home() {
+const Home: NextPage = () => {
+  const [isRegister, setIsRegister] = useState(false);
+  const { signIn, signUp, setError, error, form } = useAuth();
+  const handleSubmit = async () => {
+    const authForm = {
+      email: form.values.email,
+      password: form.values.password,
+    };
+    if (isRegister) {
+      await signUp(authForm);
+    } else {
+      await signIn(authForm);
+    }
+  };
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+    <div>
+      <Center>
+        <IconShield color="blue" size={48} />
+      </Center>
+      {error && (
+        <Alert
+          my="md"
+          variant="filled"
+          icon={<IconExclamationCircle />}
+          title="Authorization Error"
+          color="red"
+          radius="md"
+        >
+          {error}
+        </Alert>
+      )}
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <TextInput
+          mt="md"
+          id="email"
+          label="Email"
+          placeholder="example@gmail.com"
+          {...form.getInputProps('email')}
         />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
+        <PasswordInput
+          mt="md"
+          id="Password"
+          label="Password"
+          placeholder="password"
+          description="Must be min 5 chars"
+          {...form.getInputProps('password')}
+        />
+        <Group mt="xl" position="apart">
+          <Anchor
+            component="button"
+            type="button"
+            size="xs"
+            className="text-gray-300"
+            onClick={() => {
+              setIsRegister((prev) => !prev);
+              setError('');
+            }}
+          >
+            {isRegister
+              ? 'Do you have an account? Login'
+              : "You don't have an account? Register"}
+          </Anchor>
+          <Button
+            leftIcon={<IconDatabase size={14} />}
+            color="cyan"
+            type="submit"
+          >
+            {isRegister ? 'Register' : 'Login'}
+          </Button>
+        </Group>
+      </form>
+    </div>
+  );
+};
 
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default Home;
